@@ -5,17 +5,65 @@ use std::ops::Neg;
 use std::ops::Sub;
 
 #[derive(Debug, Copy, Clone, PartialEq)]
-struct Tuple {
-    x: f64,
-    y: f64,
-    z: f64,
-    w: f64,
+pub struct Tuple {
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
+    pub w: f64,
+}
+
+impl Tuple {
+    pub fn new(x: f64, y: f64, z: f64, w: f64) -> Self {
+        Tuple { x, y, z, w }
+    }
+
+    pub fn point(x: f64, y: f64, z: f64) -> Self {
+        Tuple { x, y, z, w: 1.0 }
+    }
+
+    pub fn vector(x: f64, y: f64, z: f64) -> Self {
+        Tuple { x, y, z, w: 0.0 }
+    }
+
+    pub fn equal(&self, other: &Tuple) -> bool {
+        let epsilon = f64::EPSILON;
+        (self.x - other.x).abs() < epsilon
+            && (self.y - other.y).abs() < epsilon
+            && (self.z - other.z).abs() < epsilon
+            && (self.w - other.w).abs() < epsilon
+    }
+
+    pub fn magnitude(&self) -> f64 {
+        (self.x.powi(2) + self.y.powi(2) + self.z.powi(2) + self.w.powi(2)).sqrt()
+    }
+
+    pub fn normalize(&self) -> Self {
+        let mag = self.magnitude();
+        Tuple {
+            x: self.x / mag,
+            y: self.y / mag,
+            z: self.z / mag,
+            w: self.w / mag,
+        }
+    }
+
+    pub fn dot(&self, other: &Tuple) -> f64 {
+        self.x * other.x + self.y * other.y + self.z * other.z + self.w * other.w
+    }
+
+    pub fn cross(&self, other: &Tuple) -> Self {
+        Tuple::vector(
+            self.y * other.z - self.z * other.y,
+            self.z * other.x - self.x * other.z,
+            self.x * other.y - self.y * other.x,
+        )
+    }
 }
 
 impl Add for Tuple {
-    type Output = Tuple;
+    type Output = Self;
 
-    fn add(self, other: Tuple) -> Tuple {
+    fn add(self, other: Tuple) -> Self {
         Tuple {
             x: self.x + other.x,
             y: self.y + other.y,
@@ -26,9 +74,9 @@ impl Add for Tuple {
 }
 
 impl Sub for Tuple {
-    type Output = Tuple;
+    type Output = Self;
 
-    fn sub(self, other: Tuple) -> Tuple {
+    fn sub(self, other: Tuple) -> Self {
         Tuple {
             x: self.x - other.x,
             y: self.y - other.y,
@@ -39,9 +87,9 @@ impl Sub for Tuple {
 }
 
 impl Mul<f64> for Tuple {
-    type Output = Tuple;
+    type Output = Self;
 
-    fn mul(self, scalar: f64) -> Tuple {
+    fn mul(self, scalar: f64) -> Self {
         Tuple {
             x: self.x * scalar,
             y: self.y * scalar,
@@ -52,9 +100,9 @@ impl Mul<f64> for Tuple {
 }
 
 impl Div<f64> for Tuple {
-    type Output = Tuple;
+    type Output = Self;
 
-    fn div(self, scalar: f64) -> Tuple {
+    fn div(self, scalar: f64) -> Self {
         Tuple {
             x: self.x / scalar,
             y: self.y / scalar,
@@ -65,63 +113,15 @@ impl Div<f64> for Tuple {
 }
 
 impl Neg for Tuple {
-    type Output = Tuple;
+    type Output = Self;
 
-    fn neg(self) -> Tuple {
+    fn neg(self) -> Self {
         Tuple {
             x: -self.x,
             y: -self.y,
             z: -self.z,
             w: -self.w,
         }
-    }
-}
-
-impl Tuple {
-    fn new(x: f64, y: f64, z: f64, w: f64) -> Self {
-        Tuple { x, y, z, w }
-    }
-
-    fn point(x: f64, y: f64, z: f64) -> Self {
-        Tuple { x, y, z, w: 1.0 }
-    }
-
-    fn vector(x: f64, y: f64, z: f64) -> Self {
-        Tuple { x, y, z, w: 0.0 }
-    }
-
-    fn equal(&self, other: &Tuple) -> bool {
-        let epsilon = f64::EPSILON;
-        (self.x - other.x).abs() < epsilon
-            && (self.y - other.y).abs() < epsilon
-            && (self.z - other.z).abs() < epsilon
-            && (self.w - other.w).abs() < epsilon
-    }
-
-    fn magnitude(&self) -> f64 {
-        (self.x.powi(2) + self.y.powi(2) + self.z.powi(2) + self.w.powi(2)).sqrt()
-    }
-
-    fn normalize(&self) -> Tuple {
-        let mag = self.magnitude();
-        Tuple {
-            x: self.x / mag,
-            y: self.y / mag,
-            z: self.z / mag,
-            w: self.w / mag,
-        }
-    }
-
-    fn dot(&self, other: &Tuple) -> f64 {
-        self.x * other.x + self.y * other.y + self.z * other.z + self.w * other.w
-    }
-
-    fn cross(&self, other: &Tuple) -> Tuple {
-        Tuple::vector(
-            self.y * other.z - self.z * other.y,
-            self.z * other.x - self.x * other.z,
-            self.x * other.y - self.y * other.x,
-        )
     }
 }
 
