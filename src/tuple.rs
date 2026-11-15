@@ -25,8 +25,8 @@ impl Tuple {
         Tuple { x, y, z, w: 0.0 }
     }
 
-    pub fn equal(&self, other: &Tuple) -> bool {
-        let epsilon = f64::EPSILON;
+    pub fn equal(&self, other: &Tuple, tol: Option<f64>) -> bool {
+        let epsilon = tol.unwrap_or(f64::EPSILON);
         (self.x - other.x).abs() < epsilon
             && (self.y - other.y).abs() < epsilon
             && (self.z - other.z).abs() < epsilon
@@ -151,7 +151,7 @@ mod tests {
     fn test_equal() {
         let a = Tuple::new(1.0, 2.0, 3.0, 1.0);
         let b = Tuple::new(1.0, 2.0, 3.0, 1.0);
-        assert!(a.equal(&b));
+        assert!(a.equal(&b, None));
     }
 
     #[test]
@@ -237,7 +237,7 @@ mod tests {
             2.0 / (14.0 as f64).sqrt(),
             3.0 / (14.0 as f64).sqrt(),
         );
-        assert!(result.equal(&expected));
+        assert!(result.equal(&expected, None));
     }
 
     #[test]
