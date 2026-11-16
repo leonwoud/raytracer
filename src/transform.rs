@@ -1,6 +1,8 @@
 use crate::matrix::Matrix;
 use crate::tuple::Tuple;
 
+// TODO: Move these to contructors in Matrix impl
+
 pub fn translate(x: f64, y: f64, z: f64) -> Matrix {
     // 1, 0, 0, X,
     // 0, 1, 0, Y,

@@ -117,10 +117,10 @@ impl Matrix {
     }
 }
 
-impl Mul for Matrix {
-    type Output = Self;
+impl Mul for &Matrix {
+    type Output = Matrix;
 
-    fn mul(self, other: Self) -> Self {
+    fn mul(self, other: Self) -> Matrix {
         assert_eq!(self.cols, other.rows);
         let mut result = Matrix::new(self.rows, other.cols);
         for i in 0..self.rows {
@@ -136,7 +136,15 @@ impl Mul for Matrix {
     }
 }
 
-impl Mul<Tuple> for Matrix {
+impl Mul for Matrix {
+    type Output = Matrix;
+
+    fn mul(self, other: Self) -> Matrix {
+        &self * &other
+    }
+}
+
+impl Mul<Tuple> for &Matrix {
     type Output = Tuple;
 
     fn mul(self, tuple: Tuple) -> Tuple {
@@ -157,6 +165,14 @@ impl Mul<Tuple> for Matrix {
             }
         }
         result
+    }
+}
+
+impl Mul<Tuple> for Matrix {
+    type Output = Tuple;
+
+    fn mul(self, tuple: Tuple) -> Tuple {
+        &self * tuple
     }
 }
 

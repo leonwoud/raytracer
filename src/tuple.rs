@@ -48,7 +48,8 @@ impl Tuple {
     }
 
     pub fn dot(&self, other: &Tuple) -> f64 {
-        self.x * other.x + self.y * other.y + self.z * other.z + self.w * other.w
+        let out  = self.x * other.x + self.y * other.y + self.z * other.z + self.w * other.w;
+        out
     }
 
     pub fn cross(&self, other: &Tuple) -> Self {
