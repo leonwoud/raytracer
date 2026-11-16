@@ -2,7 +2,7 @@ use crate::tuple::Tuple;
 use std::ops::Mul;
 
 #[derive(Debug, Clone, PartialEq)]
-struct Matrix {
+pub struct Matrix {
     data: Vec<Vec<f64>>,
     rows: usize,
     cols: usize,
@@ -102,7 +102,7 @@ impl Matrix {
         det
     }
 
-    fn inverse(&self) -> Self {
+    pub fn inverse(&self) -> Self {
         let det = self.determinant();
         assert!(det != 0.0, "Matrix is not invertible");
         let mut inverse = Matrix::new(self.rows, self.cols);
