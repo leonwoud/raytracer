@@ -85,6 +85,7 @@ pub fn rotate_z(radians: f64) -> Matrix {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use approx::assert_abs_diff_eq;
 
     #[test]
     fn test_translation() {
@@ -92,7 +93,7 @@ mod tests {
         let p = Tuple::point(-3.0, 4.0, 5.0);
         let expected = Tuple::point(2.0, 1.0, 7.0);
         let result = transform * p;
-        assert!(result.equal(&expected, None));
+        assert_abs_diff_eq!(result, expected);
     }
 
     #[test]
@@ -103,7 +104,7 @@ mod tests {
         let p = Tuple::point(-3.0, 4.0, 5.0);
         let expected = Tuple::point(-8.0, 7.0, 3.0);
         let result = inv * p;
-        assert!(result.equal(&expected, None));
+        assert_abs_diff_eq!(result, expected);
     }
 
     #[test]
@@ -112,7 +113,7 @@ mod tests {
         let transform = translate(5.0, -3.0, 2.0);
         let v = Tuple::vector(-3.0, 4.0, 5.0);
         let result = transform * v;
-        assert!(result.equal(&v, None));
+        assert_abs_diff_eq!(result, v);
     }
 
     #[test]
@@ -121,7 +122,7 @@ mod tests {
         let p = Tuple::point(-4.0, 6.0, 8.0);
         let expected = Tuple::point(-8.0, 18.0, 32.0);
         let result = transform * p;
-        assert!(result.equal(&expected, None));
+        assert_abs_diff_eq!(result, expected);
     }
 
     #[test]
@@ -131,7 +132,7 @@ mod tests {
         let p = Tuple::point(-4.0, 6.0, 8.0);
         let expected = Tuple::point(-2.0, 2.0, 2.0);
         let result = inv * p;
-        assert!(result.equal(&expected, None));
+        assert_abs_diff_eq!(result, expected);
     }
 
     #[test]
@@ -140,7 +141,7 @@ mod tests {
         let p = Tuple::point(2.0, 3.0, 4.0);
         let expected = Tuple::point(-2.0, 3.0, 4.0);
         let result = transform * p;
-        assert!(result.equal(&expected, None));
+        assert_abs_diff_eq!(result, expected);
     }
 
     #[test]
@@ -152,8 +153,8 @@ mod tests {
         let expected_full = Tuple::point(0.0, 0.0, 1.0);
         let result_half = half_quarter * p;
         let result_full = full_quarter * p;
-        assert!(result_half.equal(&expected_half, Some(1e-5)));
-        assert!(result_full.equal(&expected_full, Some(1e-5)));
+        assert_abs_diff_eq!(result_half, expected_half, epsilon = 1e-5);
+        assert_abs_diff_eq!(result_full, expected_full, epsilon = 1e-5);
     }
 
     #[test]
@@ -165,8 +166,8 @@ mod tests {
         let expected_full = Tuple::point(1.0, 0.0, 0.0);
         let result_half = half_quarter * p;
         let result_full = full_quarter * p;
-        assert!(result_half.equal(&expected_half, Some(1e-5)));
-        assert!(result_full.equal(&expected_full, Some(1e-5)));
+        assert_abs_diff_eq!(result_half, expected_half, epsilon = 1e-5);
+        assert_abs_diff_eq!(result_full, expected_full, epsilon = 1e-5);
     }
 
     #[test]
@@ -178,8 +179,8 @@ mod tests {
         let expected_full = Tuple::point(-1.0, 0.0, 0.0);
         let result_half = half_quarter * p;
         let result_full = full_quarter * p;
-        assert!(result_half.equal(&expected_half, Some(1e-5)));
-        assert!(result_full.equal(&expected_full, Some(1e-5)));
+        assert_abs_diff_eq!(result_half, expected_half, epsilon = 1e-5);
+        assert_abs_diff_eq!(result_full, expected_full, epsilon = 1e-5);
     }
 
     #[test]
@@ -189,7 +190,7 @@ mod tests {
         let p = Tuple::point(0.0, 1.0, 0.0);
         let expected = Tuple::point(0.0, 2f64.sqrt() / 2.0, -2f64.sqrt() / 2.0);
         let result = inv * p;
-        assert!(result.equal(&expected, Some(1e-5)));
+        assert_abs_diff_eq!(result, expected, epsilon = 1e-5);
     }
 
     #[test]
@@ -198,7 +199,7 @@ mod tests {
         let p = Tuple::point(2.0, 3.0, 4.0);
         let expected = Tuple::point(5.0, 3.0, 4.0);
         let result = transform * p;
-        assert!(result.equal(&expected, None));
+        assert_abs_diff_eq!(result, expected);
     }
 
     #[test]
@@ -207,7 +208,7 @@ mod tests {
         let p = Tuple::point(2.0, 3.0, 4.0);
         let expected = Tuple::point(6.0, 3.0, 4.0);
         let result = transform * p;
-        assert!(result.equal(&expected, None));
+        assert_abs_diff_eq!(result, expected);
     }
 
     #[test]
@@ -216,7 +217,7 @@ mod tests {
         let p = Tuple::point(2.0, 3.0, 4.0);
         let expected = Tuple::point(2.0, 5.0, 4.0);
         let result = transform * p;
-        assert!(result.equal(&expected, None));
+        assert_abs_diff_eq!(result, expected);
     }
 
     #[test]
@@ -225,7 +226,7 @@ mod tests {
         let p = Tuple::point(2.0, 3.0, 4.0);
         let expected = Tuple::point(2.0, 7.0, 4.0);
         let result = transform * p;
-        assert!(result.equal(&expected, None));
+        assert_abs_diff_eq!(result, expected);
     }
 
     #[test]
@@ -234,7 +235,7 @@ mod tests {
         let p = Tuple::point(2.0, 3.0, 4.0);
         let expected = Tuple::point(2.0, 3.0, 6.0);
         let result = transform * p;
-        assert!(result.equal(&expected, None));
+        assert_abs_diff_eq!(result, expected);
     }
 
     #[test]
@@ -243,7 +244,7 @@ mod tests {
         let p = Tuple::point(2.0, 3.0, 4.0);
         let expected = Tuple::point(2.0, 3.0, 7.0);
         let result = transform * p;
-        assert!(result.equal(&expected, None));
+        assert_abs_diff_eq!(result, expected);
     }
 
     #[test]
@@ -256,7 +257,7 @@ mod tests {
         let p3 = b * p2;
         let p4 = c * p3;
         let expected = Tuple::point(15.0, 0.0, 7.0);
-        assert!(p4.equal(&expected, Some(1e-5)));
+        assert_abs_diff_eq!(p4, expected, epsilon = 1e-5);
     }
 
     #[test]
@@ -268,7 +269,7 @@ mod tests {
         let t = c * b * a;
         let result = t * p;
         let expected = Tuple::point(15.0, 0.0, 7.0);
-        assert!(result.equal(&expected, Some(1e-5)));
+        assert_abs_diff_eq!(result, expected, epsilon = 1e-5);
     }
 
 }

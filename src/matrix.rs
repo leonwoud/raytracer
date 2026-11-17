@@ -1,4 +1,5 @@
 use crate::tuple::Tuple;
+use approx::AbsDiffEq;
 use std::ops::Mul;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -34,20 +35,6 @@ impl Matrix {
 
     pub fn set(&mut self, row: usize, col: usize, value: f64) {
         self.data[row][col] = value;
-    }
-
-    pub fn equal(&self, other: &Matrix, tol: Option<f64>) -> bool {
-        if self.rows != other.rows || self.cols != other.cols {
-            return false;
-        }
-        for i in 0..self.rows {
-            for j in 0..self.cols {
-                if (self.data[i][j] - other.data[i][j]).abs() > tol.unwrap_or(f64::EPSILON) {
-                    return false;
-                }
-            }
-        }
-        true
     }
 
     fn submatrix(&self, row: usize, col: usize) -> Self {
@@ -117,6 +104,25 @@ impl Matrix {
     }
 }
 
+impl AbsDiffEq for Matrix {
+    type Epsilon = f64;
+
+    fn default_epsilon() -> f64 {
+        f64::default_epsilon()
+    }
+
+    fn abs_diff_eq(&self, other: &Self, epsilon: f64) -> bool {
+        self.rows == other.rows
+            && self.cols == other.cols
+            && self
+                .data
+                .iter()
+                .flatten()
+                .zip(other.data.iter().flatten())
+                .all(|(a, b)| a.abs_diff_eq(b, epsilon))
+    }
+}
+
 impl Mul for &Matrix {
     type Output = Matrix;
 
@@ -179,6 +185,7 @@ impl Mul<Tuple> for Matrix {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use approx::assert_abs_diff_eq;
 
     #[test]
     fn test_from_vec() {
@@ -419,7 +426,7 @@ mod tests {
         ]);
 
         let result = m.inverse();
-        assert!(result.equal(&expected, Some(0.00001)));
+        assert_abs_diff_eq!(result, expected, epsilon = 0.00001);
     }
 
     #[test]
@@ -441,6 +448,6 @@ mod tests {
         let c = a.clone() * b.clone();
         let b_inv = b.inverse();
         let result = c * b_inv;
-        assert!(result.equal(&a, Some(0.00001)));
+        assert_abs_diff_eq!(result, a, epsilon = 0.00001);
     }
 }

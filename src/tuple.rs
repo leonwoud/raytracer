@@ -1,3 +1,4 @@
+use approx::AbsDiffEq;
 use std::ops::Add;
 use std::ops::Div;
 use std::ops::Mul;
@@ -25,14 +26,6 @@ impl Tuple {
         Tuple { x, y, z, w: 0.0 }
     }
 
-    pub fn equal(&self, other: &Tuple, tol: Option<f64>) -> bool {
-        let epsilon = tol.unwrap_or(f64::EPSILON);
-        (self.x - other.x).abs() < epsilon
-            && (self.y - other.y).abs() < epsilon
-            && (self.z - other.z).abs() < epsilon
-            && (self.w - other.w).abs() < epsilon
-    }
-
     pub fn magnitude(&self) -> f64 {
         (self.x.powi(2) + self.y.powi(2) + self.z.powi(2) + self.w.powi(2)).sqrt()
     }
@@ -58,6 +51,25 @@ impl Tuple {
             self.z * other.x - self.x * other.z,
             self.x * other.y - self.y * other.x,
         )
+    }
+
+    pub fn reflect(&self, normal: &Tuple) -> Self {
+        *self - *normal * 2.0 * self.dot(normal)
+    }
+}
+
+impl AbsDiffEq for Tuple {
+    type Epsilon = f64;
+
+    fn default_epsilon() -> f64 {
+        f64::default_epsilon()
+    }
+
+    fn abs_diff_eq(&self, other: &Self, epsilon: f64) -> bool {
+        self.x.abs_diff_eq(&other.x, epsilon)
+            && self.y.abs_diff_eq(&other.y, epsilon)
+            && self.z.abs_diff_eq(&other.z, epsilon)
+            && self.w.abs_diff_eq(&other.w, epsilon)
     }
 }
 
@@ -129,6 +141,7 @@ impl Neg for Tuple {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use approx::assert_abs_diff_eq;
 
     #[test]
     fn test_point() {
@@ -152,7 +165,7 @@ mod tests {
     fn test_equal() {
         let a = Tuple::new(1.0, 2.0, 3.0, 1.0);
         let b = Tuple::new(1.0, 2.0, 3.0, 1.0);
-        assert!(a.equal(&b, None));
+        assert_abs_diff_eq!(a, b);
     }
 
     #[test]
@@ -238,7 +251,7 @@ mod tests {
             2.0 / (14.0 as f64).sqrt(),
             3.0 / (14.0 as f64).sqrt(),
         );
-        assert!(result.equal(&expected, None));
+        assert_abs_diff_eq!(result, expected);
     }
 
     #[test]
@@ -264,5 +277,21 @@ mod tests {
         let result2 = b.cross(&a);
         assert_eq!(result1, Tuple::vector(-1.0, 2.0, -1.0));
         assert_eq!(result2, Tuple::vector(1.0, -2.0, 1.0));
+    }
+
+    #[test]
+    fn test_reflect_vector_at_45_degrees() {
+        let v = Tuple::vector(1.0, -1.0, 0.0);
+        let n = Tuple::vector(0.0, 1.0, 0.0);
+        let r = v.reflect(&n);
+        assert_eq!(r, Tuple::vector(1.0, 1.0, 0.0));
+    }
+
+    #[test]
+    fn test_reflect_vector_off_slanted_surface() {
+        let v = Tuple::vector(0.0, -1.0, 0.0);
+        let n = Tuple::vector(2f64.sqrt() / 2.0, 2f64.sqrt() / 2.0, 0.0);
+        let r = v.reflect(&n);
+        assert_abs_diff_eq!(r, Tuple::vector(1.0, 0.0, 0.0), epsilon = 1e-5);
     }
 }
